@@ -1,8 +1,12 @@
+#!/uar/bin/env python
+
 import time
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.keys import Keys
-import getpass
+# import getpass
+import keyring
+
 
 user = 'jaimeruizno@gmail.com'
 
@@ -34,27 +38,28 @@ def load_all_items(driver):
 
 def signIn(driver):
 
-	loginURL = 'https://www.3ss.hays.com.au/'
+	loginURL = 'https://www.3ss.hays.com.au'
+	user = 'jaimeruizno@gmail.com'
 
 	driver.get(loginURL)
 
 	print('Attempting login')
 	driver.find_element_by_id('username').send_keys(user)
-	passwd = getpass.getpass('Password: ')
-	driver.find_element_by_id('password').send_keys(passwd, Keys.ENTER)
-	del passwd
+	# passwd = getpass.getpass('Password: ')
+	driver.find_element_by_id('password').send_keys(keyring.get_password(loginURL,user), Keys.ENTER) #
+	# del passwd
 
 	time.sleep(1)
 
-	while driver.current_url == 'https://www.3ss.hays.com.au/default.aspx?m=LOGIN_INVALID':
-			print('Wrong password')
-			print('Try again')
-			driver.find_element_by_id('username').send_keys(user)
-			passwd = getpass.getpass('Password: ')
-			driver.find_element_by_id('password').send_keys(passwd, Keys.ENTER)
-			del passwd
-
-			time.sleep(1)
+	# while driver.current_url == 'https://www.3ss.hays.com.au/default.aspx?m=LOGIN_INVALID':
+	# 		print('Wrong password')
+	# 		print('Try again')
+	# 		driver.find_element_by_id('username').send_keys(user)
+	# 		passwd = getpass.getpass('Password: ')
+	# 		driver.find_element_by_id('password').send_keys(passwd, Keys.ENTER)
+	# 		del passwd
+	#
+	# 		time.sleep(1)
 
 
 
@@ -76,7 +81,7 @@ def newTimesheet(driver):
 	except:
 		driver.find_element_by_xpath('//*[@id="cc83677a-78ec-431c-97db-593bb585037e"]/span').click()
 
-	time.sleep(1)
+	time.sleep(2)
 
 	print('Populating timesheet with default values')
 	testTime = driver.find_element_by_xpath('//*[@id="h_start_time"]')
@@ -108,18 +113,25 @@ def newTimesheet(driver):
 								)
 	time.sleep(1)
 
-	driver.find_element_by_xpath('//*[@id="id_80b008f0-992d-45b0-aafb-1e53b858b7d2"]/tbody/tr[3]/td/div/div/table/tbody/tr[1]/td/a').click()
+#	driver.find_element_by_xpath('//*[@id="id_80b008f0-992d-45b0-aafb-1e53b858b7d2"]/tbody/tr[3]/td/div/div/table/tbody/tr[1]/td/a').click()
 
-	time.sleep(1)
+#	time.sleep(1)
 
 	# TODO: add option to write a comment (passed as a CLI argument)
-	driver.find_element_by_xpath('//*[@id="5ccad77c-d3f2-4b08-91d4-2cb2f2467ac6"]').click()
+#	driver.find_element_by_xpath('//*[@id="5ccad77c-d3f2-4b08-91d4-2cb2f2467ac6"]').click()
 
 	time.sleep(1)
 
-	print(driver.find_element_by_xpath('//*[@id="id_7042a4be-7570-4277-a2cb-7cdf6b2e2fbd"]/tbody/tr[4]/td/div/div/table/tbody/tr[2]/td[7]').getText())
+#	print(driver.find_element_by_xpath('//*[@id="id_7042a4be-7570-4277-a2cb-7cdf6b2e2fbd"]/tbody/tr[4]/td/div/div/table/tbody/tr[2]/td[7]').getText())
 
 if __name__ == '__main__':
+
+
+	with open('hours.log', 'r') as f:
+		hours = f.read()
+		if hours:
+			print('ATTENTION: Weird hours this week:')
+			print(hours)
 	time0 = time.time()
 	driver = webdriver.Chrome()
 	driver.implicitly_wait(10)
